@@ -2,7 +2,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="com.beans.test" %>
 <%@ include file="templates/header.jsp" %>
-<div style="text-align: center">
+
+<div class="centered">
 
   <h3>Hello, ${user.firstName}</h3>
 
@@ -23,17 +24,21 @@
         </select>
 
         <input type="submit" value="Select">
-
       </form>
+
+<!--Message if submitted successfully-->
+    <% if (request.getAttribute("submissionMessage") != null) { %>
+    <p><%=request.getAttribute("submissionMessage")%></p>
+    <% } %>
 
 <!--Displaying test set-->
   <% if (request.getAttribute("testList") != null) { %>
 
       <p>Set of tests for product: ${product.getName()}</p>
-      <br>
+<br>
 
-  <table>
     <form action="submit-results" method="post">
+      <table>
     <tr>
       <th>Test name</th>
       <th>Unit of measure</th>
@@ -49,11 +54,15 @@
     </tr>
 
     <% } %>
-
-    <input type="submit" value="Submit Results">
+      </table>
+      <br>
+      <input type="text" name="productId" value="${product.getId()}" hidden="hidden">
+      <input type="text" name="username" value="${user.username}" hidden="hidden">
+      <input type="submit" value="Submit Results">
+      <br>
     </form>
 
-  </table>
+
 
 <% } %>
 </div>

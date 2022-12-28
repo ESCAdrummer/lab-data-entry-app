@@ -12,7 +12,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class testServlets extends HttpServlet {
@@ -87,4 +89,52 @@ public class testServlets extends HttpServlet {
         }
     }
 
+    @WebServlet(name = "submit-results", value = "/submit-results")
+    public static class submitResults extends HttpServlet{
+        public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+
+            applicationDao dao = new applicationDao();
+            List<products> productList = dao.retrieveProductList();
+            request.setAttribute("productList", productList);
+
+            request.getRequestDispatcher("createTest.jsp").forward(request,response);
+
+        }
+
+        public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+            applicationDao dao = new applicationDao();
+
+            //retrieve product
+            products product = dao.retrieveProductById(Integer.parseInt(request.getParameter("productId")));
+
+            //retrieve user
+            user labTechnician = dao.retrieveUser(request.getParameter("username"));
+
+            //get list of tests with id for that product
+            List<test> testList = dao.retrieveTestListByProductId(product.getId());
+
+            //construct hashMap with all testId#result as per test list
+            Map<Integer,String> resultSet = new HashMap<>();
+
+            //fill with values from JSP and add to list
+            String variableName = "";
+            List<Integer> testIdList = new ArrayList<>();
+            for (test testEntry : testList) {
+                variableName = "testId" + testEntry.getId() + "result";
+                resultSet.put(testEntry.getId(), request.getParameter(variableName));
+                testIdList.add(testEntry.getId());
+            }
+
+            //send to database
+            for (Integer testId : testIdList) {
+                dao.setTestResult(labTechnician.getId(), product.getId(), testId, Double.parseDouble(resultSet.get(testId)));
+            }
+
+            //Submission message
+            request.setAttribute("submissionMessage", "Test results submitted successfully.");
+
+            doGet(request, response);
+        }
+    }
 }

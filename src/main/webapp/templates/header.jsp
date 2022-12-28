@@ -10,11 +10,11 @@
 
 <body>
 
-  <div style="text-align: center">
+  <div class="centered">
     <h1>ICE Quimica SRL</h1>
   </div>
 
-  <div class="navbar" style="text-align: center">
+  <div class="navbar">
 
     <a href="home">Home</a>
 

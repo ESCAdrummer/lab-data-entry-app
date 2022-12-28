@@ -2,10 +2,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="styles.css">
     <title>ICE Quimica SRL</title>
 </head>
 <body>
-<div style="text-align: center">
+<div class="centered">
     <h1>ICE Quimica SRL</h1>
         <h3>Please login below to access the application. </h3>
             <p><% if (request.getAttribute("message") != null) { %>

@@ -1,7 +1,7 @@
 <%@ page import="com.beans.user" %>
 <%@include file="/templates/header.jsp"%>
 <%@include file="/templates/adminsubheader.jsp"%>
-
+<div class="centered">
 <h3>Products Maintenance</h3>
 
 <div>
@@ -27,6 +27,7 @@
 <div>
     <h4>Assign test to product.</h4>
 
+</div>
 </div>
 
 <%@include file="/templates/adminfooter.jsp"%>

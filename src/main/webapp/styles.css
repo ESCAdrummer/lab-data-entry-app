@@ -67,3 +67,17 @@
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
+table, td, th {
+    margin-left:auto;
+    margin-right:auto;
+    padding: 10px;
+    text-align: center;
+    vertical-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.centered {
+    text-align: center;
+    margin: auto;
+}

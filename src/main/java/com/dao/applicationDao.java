@@ -8,7 +8,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class applicationDao {
@@ -118,6 +120,7 @@ public class applicationDao {
 
         //fill the returned result in a bean
         while (set.next()){
+            userObject.setId(set.getInt("id"));
             userObject.setFirstName(set.getString("firstName"));
             userObject.setLastName(set.getString("lastName"));
             userObject.setUsername(set.getString("username"));
@@ -204,7 +207,7 @@ public class applicationDao {
             Connection connection = DBConnection.getInstance();
 
             //create query
-            String query =  "select t.id, t.name, t.units from qualityset qs" +
+            String query =  "select t.id, t.name, t.units from qualitySet qs" +
                             " join test t on qs.test_id = t.id" +
                             " join products p on qs.products_id = p.id where p.id = ? order by name;";
 
@@ -230,5 +233,37 @@ public class applicationDao {
         }
         return testsList;
 
+    }
+
+    public void setTestResult(int userId, int productId, Integer testId, Double value) {
+
+        try {
+            //Connect to DB
+            Connection connection = DBConnection.getInstance();
+
+            //Write query
+            String createQuery = "insert into testResults (date,user_id,products_id,test_id,value) values (?,?,?,?,?)";
+
+            //Set parameters with PreparedStatement
+                //Setting current date
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                String currentDate = dateFormat.format(new Date());
+            PreparedStatement statement = connection.prepareStatement(createQuery);
+            statement.setString(1, currentDate);
+            statement.setInt(2, userId);
+            statement.setInt(3, productId);
+            statement.setInt(4, testId);
+            statement.setDouble(5, value);
+
+            //Execute the Statement
+            statement.executeUpdate();
+
+            //close the connection
+            statement.close();
+        }
+
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,6 @@
 <%@ include file="templates/header.jsp" %>
 
-<div style="text-align: center">
+<div class="centered">
     <h3>Hello, ${user.firstName}</h3>
     <p>Please select an action from the navigation bar above.</p>
 </div>
