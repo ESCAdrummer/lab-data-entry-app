@@ -15,7 +15,7 @@ public class userMaintenance extends HttpServlet {
 
         //retrieve user from current session and load in a bean
         applicationDao dao = new applicationDao();
-        user userObject = dao.retrieveUser((String) request.getSession().getAttribute("username"));
+        user userObject = dao.getUser((String) request.getSession().getAttribute("username"));
 
         //If user has access then send to the jsp
         if (userObject.isAdmin())  {

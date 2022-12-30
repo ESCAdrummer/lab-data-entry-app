@@ -10,22 +10,22 @@
 </div>
 
 <div>
-    <h4>View product.</h4>
+    <h4>View products list.</h4>
 
 </div>
 
 <div>
-    <h4>Change product.</h4>
+    <h4>Change product name.</h4>
 
 </div>
 
 <div>
     <h4>Delete product.</h4>
-
 </div>
 
 <div>
     <h4>Assign test to product.</h4>
+    <h4>Remove test from product.</h4>
 
 </div>
 </div>

@@ -2,6 +2,7 @@ package com.icequimica;
 
 import com.beans.products;
 import com.beans.test;
+import com.beans.testResults;
 import com.beans.user;
 import com.dao.applicationDao;
 import jakarta.servlet.ServletException;
@@ -24,7 +25,7 @@ public class testServlets extends HttpServlet {
         public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
             applicationDao dao = new applicationDao();
-            List<products> productList = dao.retrieveProductList();
+            List<products> productList = dao.getProductList();
             request.setAttribute("productList", productList);
 
             request.getRequestDispatcher("createTest.jsp").forward(request,response);
@@ -39,8 +40,8 @@ public class testServlets extends HttpServlet {
             if (productSelection != 0) {
                 //retrieve product from database and testList for that product
                 applicationDao dao = new applicationDao();
-                products product = dao.retrieveProductById(productSelection);
-                List<test> testList = dao.retrieveTestListByProductId(productSelection);
+                products product = dao.getProductById(productSelection);
+                List<test> testList = dao.getTestListByProductId(productSelection);
 
                 //set both items as attributes
                 request.setAttribute("product", product);
@@ -55,13 +56,99 @@ public class testServlets extends HttpServlet {
     public static class viewTests extends HttpServlet{
         public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
+            applicationDao dao = new applicationDao();
+
+            //getting filter criteria from get request
+            String filter = request.getParameter("filter");
+
+            if (filter!=null) {
+
+                List<String> filterData;
+                List<testResults> testResultSet = new ArrayList<>();
+
+                //switch to filter according to filter criteria (date has no filtering criteria, only selection of range).
+            switch (filter) {
+                case "product":
+                    //retrieve list of products with test results
+                    filterData = dao.getProductsWithTestResults();
+
+                    break;
+                case "user":
+                    //retrieve list of users with test results
+                    filterData = dao.getUsersWithTestResults();
+                    break;
+                default:
+                    //if any other info comes in get request (or null) set to null
+                    filterData = null;
+            }
+
+                //sending retrieved info to display on jsp
+                request.setAttribute("filter", filter);
+                request.setAttribute("filterData", filterData);
+                request.setAttribute("testResultSet", testResultSet);
+
+            }
+
             request.getRequestDispatcher("viewTests.jsp").forward(request,response);
 
         }
 
         public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+            //retrieve parameters from JSP
+            String fromDate = request.getParameter("fromDate");
+            String toDate = request.getParameter("toDate");
+            String productSelection = request.getParameter("productSelection");
+            String userSelection = request.getParameter("userSelection");
 
-            doGet(request, response);
+            applicationDao dao = new applicationDao();
+
+            List<testResults> testResultsSet = new ArrayList<>();
+            String displayMessage = "";
+
+            //case view by date
+            if (fromDate!=null && toDate!=null) {
+                if (!fromDate.equals("") && !toDate.equals("")) {
+                    request.setAttribute("fromDate", fromDate);
+                    request.setAttribute("toDate", toDate);
+
+                    if (toDate.compareTo(fromDate) < 0) {
+                        displayMessage = "'Date-from' must be before 'date-to', please enter correct dates.";
+                    } else {
+                        displayMessage= "Showing results for the specified dates: ";
+
+                        testResultsSet = dao.getTestResultsByDateRange(fromDate, toDate);
+
+                    }
+                    request.setAttribute("displayMessage", displayMessage);
+                }
+            }
+
+            //case view by product
+            if (productSelection!=null) {
+                if (!productSelection.equals("none")) {
+                    request.setAttribute("displayByProduct", productSelection);
+
+                    displayMessage = "Showing results for product: ";
+                    request.setAttribute("displayMessage", displayMessage);
+
+                    testResultsSet = dao.getTestResultsByProduct(productSelection);
+                }
+            }
+
+            //case view by user
+            if (userSelection!=null) {
+                if (!userSelection.equals("none")) {
+                    request.setAttribute("displayByUser", userSelection);
+
+                    displayMessage = "Showing results for user: ";
+                    request.setAttribute("displayMessage", displayMessage);
+
+                    testResultsSet = dao.getTestResultsByUser(userSelection);
+
+                }
+            }
+            request.setAttribute("testResultsSet",testResultsSet);
+            doGet(request,response);
         }
     }
 
@@ -71,7 +158,7 @@ public class testServlets extends HttpServlet {
 
             //retrieve user from current session and load in a bean
             applicationDao dao = new applicationDao();
-            user userObject = dao.retrieveUser((String) request.getSession().getAttribute("username"));
+            user userObject = dao.getUser((String) request.getSession().getAttribute("username"));
 
             //If user has access then send to the jsp
             if (userObject.isAdmin())  {
@@ -94,7 +181,7 @@ public class testServlets extends HttpServlet {
         public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
             applicationDao dao = new applicationDao();
-            List<products> productList = dao.retrieveProductList();
+            List<products> productList = dao.getProductList();
             request.setAttribute("productList", productList);
 
             request.getRequestDispatcher("createTest.jsp").forward(request,response);
@@ -106,13 +193,13 @@ public class testServlets extends HttpServlet {
             applicationDao dao = new applicationDao();
 
             //retrieve product
-            products product = dao.retrieveProductById(Integer.parseInt(request.getParameter("productId")));
+            products product = dao.getProductById(Integer.parseInt(request.getParameter("productId")));
 
             //retrieve user
-            user labTechnician = dao.retrieveUser(request.getParameter("username"));
+            user labTechnician = dao.getUser(request.getParameter("username"));
 
             //get list of tests with id for that product
-            List<test> testList = dao.retrieveTestListByProductId(product.getId());
+            List<test> testList = dao.getTestListByProductId(product.getId());
 
             //construct hashMap with all testId#result as per test list
             Map<Integer,String> resultSet = new HashMap<>();

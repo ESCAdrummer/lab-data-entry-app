@@ -10,8 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.UUID;
 
 /**
  * Sign up / Log in / Logout pages.
@@ -88,7 +86,7 @@ public class authentication extends HttpServlet {
                 HttpSession session = request.getSession();
 
                 //Retrieve user information and set in a bean
-                userObject = dao.retrieveUser(userObject.getUsername());
+                userObject = dao.getUser(userObject.getUsername());
 
                 //Set user bean as an attribute in the session
                 session.setAttribute("user", userObject);

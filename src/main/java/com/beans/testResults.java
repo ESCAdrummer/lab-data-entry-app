@@ -7,7 +7,7 @@ public class testResults {
     private String username;
     private String productName;
     private String testName;
-    private String value;
+    private double value;
     private String units;
 
     public void setId(int id) {
@@ -30,7 +30,7 @@ public class testResults {
         this.testName = testName;
     }
 
-    public void setValue(String value) {
+    public void setValue(double value) {
         this.value = value;
     }
 
@@ -58,7 +58,7 @@ public class testResults {
         return testName;
     }
 
-    public String getValue() {
+    public double getValue() {
         return value;
     }
 

@@ -28,7 +28,8 @@
 
       <div class="dropdown-content">
         <a href="view-tests?filter=date">View Test History by Date</a>
-        <a href="view-tests?filter=users">View Test History by User</a>
+        <a href="view-tests?filter=user">View Test History by User</a>
+        <a href="view-tests?filter=product">View Test History by Product</a>
       </div>
 
     </div>
